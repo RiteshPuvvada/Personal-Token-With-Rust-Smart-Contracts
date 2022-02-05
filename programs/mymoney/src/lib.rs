@@ -1,21 +1,25 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Burn, MintTo, SetAuthority, Transfer};
 
+
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 #[program]
-pub mod mymoneydapp {
+pub mod mymoney {
     use super::*;
 
     pub fn proxy_transfer(ctx: Context<ProxyTransfer>, amount: u64) -> ProgramResult {
         token::transfer(ctx.accounts.into(), amount)
     }
+    
     pub fn proxy_mint_to(ctx: Context<ProxyMintTo>, amount: u64) -> ProgramResult {
         token::mint_to(ctx.accounts.into(), amount)
     }
+    
     pub fn proxy_burn(ctx: Context<ProxyBurn>, amount: u64) -> ProgramResult {
         token::burn(ctx.accounts.into(), amount)
     }
+    
     pub fn proxy_set_authority(
         ctx: Context<ProxySetAuthority>,
         authority_type: AuthorityType,
@@ -27,10 +31,10 @@ pub mod mymoneydapp {
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub enum AuthorityType {
-    MintTokens,    // To mint new tokens
+    MintTokens,     // To mint new tokens
     FreezeAccount, // To freeze any account associated with mint
-    AccountOwner,  // Owner of given token
-    CloseAccount,  //  To close a token account
+    AccountOwner, // Owner of given token
+    CloseAccount //  To close a token account
 }
 
 #[derive(Accounts)]
@@ -79,7 +83,7 @@ pub struct ProxySetAuthority<'info> {
 
 // For proxyTransfer
 
-impl<'a, 'b, 'c, 'info> From<&mut ProxyTransfer<'info>>
+impl <'a, 'b, 'c, 'info> From<&mut ProxyTransfer<'info>> 
     for CpiContext<'a, 'b, 'c, 'info, Transfer<'info>>
 {
     fn from(accounts: &mut ProxyTransfer<'info>) -> CpiContext<'a, 'b, 'c, 'info, Transfer<'info>> {
